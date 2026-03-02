@@ -3,6 +3,7 @@ package tests.api;
 import api.client.BookStoreClient;
 import api.models.Book;
 import api.models.BooksResponse;
+import api.specifications.ResponseSpec;
 import core.base.ApiBaseTest;
 import io.restassured.response.Response;
 import org.testng.Assert;
@@ -15,7 +16,7 @@ public class BookApiTest extends ApiBaseTest {
     @Test
     public void getBooksList() {
         Response response = bookClient.getBooks();
-        response.then().statusCode(200);
+        response.then().spec(ResponseSpec.statusCode200());
         BooksResponse booksResponse = response.as(BooksResponse.class);
         Assert.assertFalse(booksResponse.getBooks().isEmpty(), "cписок книг пуст");
         Book firstBook = booksResponse.getBooks().get(0);

@@ -3,7 +3,7 @@ package core.config;
 import org.aeonbits.owner.Config;
 
 @Config.Sources({
-        "classpath:config.properties"
+        "file:src/test/resources/features/config.properties"
 })
 public interface TestConfig extends Config {
     @Key("base.url")
@@ -17,4 +17,10 @@ public interface TestConfig extends Config {
 
     @Key("timeout")
     int timeout();
+
+    @Key("username")
+    String username();
+
+    @Key("password")
+    String password();
 }
