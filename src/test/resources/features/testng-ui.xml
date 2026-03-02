@@ -2,11 +2,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Demoqa Tests">
 
-    <test name="API Tests">
-        <packages>
-            <package name="com.demoqa.api.tests"/>
-        </packages>
-    </test>
+    <listeners>
+        <listener class-name="core.utils.RetryListener"/>
+    </listeners>
 
     <test name="UI Tests">
         <packages>
