@@ -5,6 +5,8 @@ import api.models.Book;
 import api.models.BooksResponse;
 import api.specifications.ResponseSpec;
 import core.base.ApiBaseTest;
+import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -14,6 +16,8 @@ public class BookApiTest extends ApiBaseTest {
     BookStoreClient bookClient = new BookStoreClient();
 
     @Test
+    @Step("Тест получения списка книг")
+    @Description("Проверка успешного получения списка книг")
     public void getBooksList() {
         Response response = bookClient.getBooks();
         response.then().spec(ResponseSpec.statusCode200());

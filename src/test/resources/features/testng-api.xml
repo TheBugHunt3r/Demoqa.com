@@ -8,7 +8,7 @@
 
     <test name="API Tests">
         <packages>
-            <package name="com.demoqa.api.tests"/>
+            <package name="tests.api"/>
         </packages>
     </test>
 </suite>

@@ -13,4 +13,9 @@ public class GenerateTokenRequest {
 
     private String userName;
     private String password;
+
+    @Override
+    public String toString() {
+        return "GenerateTokenRequest(userName=" + userName + ", password=***)";
+    }
 }
