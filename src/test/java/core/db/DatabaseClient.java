@@ -1,11 +1,13 @@
 package core.db;
 
 import core.config.ConfigManager;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Slf4j
 public class DatabaseClient {
 
     private final String url;
@@ -33,6 +35,6 @@ public class DatabaseClient {
 
     public static void main(String[] args) {
         DatabaseClient db = new DatabaseClient();
-        System.out.println("Подключение к БД: " + db.testConnection());
+        log.info("подключение к БД: {}", db.testConnection());
     }
 }
