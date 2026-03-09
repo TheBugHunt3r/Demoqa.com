@@ -1,6 +1,8 @@
 package api.specifications;
 
 import core.config.ConfigManager;
+import core.config.TokenManager;
+import core.utils.HidePasswordFilter;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
@@ -12,7 +14,8 @@ public class RequestSpec {
         return new RequestSpecBuilder()
                 .setBaseUri(ConfigManager.getConfig().apiUrl())
                 .setContentType(ContentType.JSON)
-                .log(io.restassured.filter.log.LogDetail.ALL)
+                .setRelaxedHTTPSValidation()
+                .addFilter(new HidePasswordFilter())
                 .build();
     }
 
@@ -20,7 +23,7 @@ public class RequestSpec {
         return new RequestSpecBuilder()
                 .setBaseUri(ConfigManager.getConfig().apiUrl())
                 .setContentType(ContentType.JSON)
-                .addHeader("Authorization", "Bearer " + token)
+                .addHeader("Authorization", "Bearer "  + TokenManager.getToken())
                 .log(LogDetail.ALL)
                 .build();
     }

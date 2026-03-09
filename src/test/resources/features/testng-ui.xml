@@ -8,7 +8,7 @@
 
     <test name="UI Tests">
         <packages>
-            <package name="com.demoqa.ui.tests"/>
+            <package name="tests.ui"/>
         </packages>
     </test>
 </suite>

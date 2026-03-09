@@ -1,31 +1,42 @@
 package api.client;
 
 import api.Endpoints;
-import api.specifications.RequestSpec;
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
-public class AccountClient {
+public class AccountClient extends BaseApiClient {
 
-    public Response authorize(Object body) {
+    @Step("Авторизация пользователя {username}")
+    public Response authorize(String username, String password) {
+        Map<String, String> body = Map.of("userName", username, "password", password);
         return given()
-                .spec(RequestSpec.baseRequest())
+                .spec(getBaseSpec())
                 .body(body)
                 .post(Endpoints.AUTHORIZED);
     }
 
-    public Response generateToken(Object body) {
+    @Step("Генерация токена для пользователя {username}")
+    public Response generateToken(String username, String password) {
+        Map<String, String> body = Map.of("userName", username, "password", password);
         return given()
-                .spec(RequestSpec.baseRequest())
+                .spec(getBaseSpec())
                 .body(body)
                 .post(Endpoints.GENERATE_TOKEN);
     }
 
-    public Response createUser(Object body) {
+    @Step("Создание пользователя {username}")
+    public Response createUser(String username, String password) {
+        Map<String, String> authData = new HashMap<>();
+        authData.put("userName", username);
+        authData.put("password", password);
         return given()
-                .spec(RequestSpec.baseRequest())
-                .body(body)
+                .spec(getBaseSpec())
+                .body(authData)
                 .post(Endpoints.USER);
     }
 }

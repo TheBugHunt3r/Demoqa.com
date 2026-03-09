@@ -1,10 +1,12 @@
 package core.config;
 
+import core.utils.OwnerDecryptor;
 import org.aeonbits.owner.Config;
 
 @Config.Sources({
         "file:src/test/resources/features/config.properties"
 })
+@Config.DecryptorClass(OwnerDecryptor.class)
 public interface TestConfig extends Config {
     @Key("base.url")
     String baseUrl();
@@ -22,5 +24,15 @@ public interface TestConfig extends Config {
     String username();
 
     @Key("password")
+    @EncryptedValue
     String password();
+
+    @Key("db.url")
+    String dbUrl();
+
+    @Key("db.user")
+    String dbUser();
+
+    @Key("db.password")
+    String dbPassword();
 }
