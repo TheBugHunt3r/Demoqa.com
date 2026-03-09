@@ -2,31 +2,28 @@ package core.config;
 
 public class TokenManager {
 
-    private static ThreadLocal<String> token = new ThreadLocal<>();
-    private static ThreadLocal<String> userId = new ThreadLocal<>();
+    private static String token;
+    private static String userId;
 
     public static void setToken(String value) {
-        token.set(value);
+        token = value;
+        System.out.println("токен записан в TokenManager: " + value);
     }
 
     public static String getToken() {
-        return token.get();
-    }
-
-    public static void removeToken() {
-        token.remove();
+        return token;
     }
 
     public static void setUserId(String id) {
-        userId.set(id);
+        userId = id;
     }
 
     public static String getUserId() {
-        return userId.get();
+        return userId;
     }
 
     public static void clear() {
-        token.remove();
-        userId.remove();
+        token = null;
+        userId = null;
     }
 }

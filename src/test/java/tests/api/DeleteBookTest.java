@@ -2,12 +2,12 @@ package tests.api;
 
 import api.client.BookStoreClient;
 import api.models.*;
-import api.specifications.ResponseSpec;
 import core.base.ApiBaseTest;
 import core.config.TokenManager;
 import core.helpers.AuthHelper;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
+import io.restassured.response.Response;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class DeleteBookTest extends ApiBaseTest {
 
-    BookStoreClient bookClient = new BookStoreClient();
+    private final BookStoreClient bookClient = new BookStoreClient();
 
     @BeforeClass
     public void auth() {
@@ -23,28 +23,17 @@ public class DeleteBookTest extends ApiBaseTest {
     }
 
     @Test
-    @Step("Тест удаления книги")
-    @Description("Проверка успешного удаления книги")
+    @Step("Тест удаления книги из коллекции")
+    @Description("Успешное добавление и удаление книги из коллекции")
     public void deleteBookTest() {
-        BooksResponse booksResponse = bookClient.getBooks()
-                        .then()
-                        .spec(ResponseSpec.statusCode200())
-                        .extract()
-                        .as(BooksResponse.class);
-        String isbn = booksResponse.getBooks().get(0).getIsbn();
-        AddBookRequest booksRequest = AddBookRequest.builder()
-                .userId(TokenManager.getUserId())
-                .collectionOfIsbns(List.of(new Isbn(isbn)))
-                .build();
-        bookClient.addBook(booksRequest)
-                .then()
-                .spec(ResponseSpec.statusCode201());
-        DeleteBookRequest deleteRequest = DeleteBookRequest.builder()
-                .isbn(isbn)
-                .userId(TokenManager.getUserId())
-                .build();
-        bookClient.deleteBook(deleteRequest)
-                .then()
-                .spec(ResponseSpec.statusCode204());
+        String userId = TokenManager.getUserId();
+        BooksResponse allBooks = bookClient.getBooks().as(BooksResponse.class);
+        String isbn = allBooks.getBooks().get(0).getIsbn();
+        bookClient.addBook(userId, List.of(isbn)).then().statusCode(201);
+        bookClient.deleteBook(userId, isbn).then().statusCode(204);
+        try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
+        Response finalCheck = bookClient.getUserBooks(userId);
+        finalCheck.then().statusCode(200);
+        System.out.println("сервер подтвердил удаление (204) и доступ к корзине (200)");
     }
 }

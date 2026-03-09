@@ -1,61 +1,47 @@
 package api.client;
 
 import api.Endpoints;
-import api.models.AddBookRequest;
-import api.models.DeleteBookRequest;
-import api.models.GenerateTokenRequest;
-import api.specifications.RequestSpec;
-import core.config.ConfigManager;
-import core.config.TokenManager;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
+import org.testng.Assert;
 
-import static io.restassured.RestAssured.given;
+import java.util.List;
+import java.util.Map;
 
-public class BookStoreClient {
+public class BookStoreClient extends BaseApiClient {
 
     private static String token;
 
     @Step("Получение списка книг")
     public Response getBooks() {
-        return given()
-                .spec(RequestSpec.baseRequest())
-                .when()
-                .get(Endpoints.BOOKS);
+        return getWithAuth(Endpoints.BOOKS);
     }
 
-    @Step("Удаление книги")
-    public Response deleteBook(DeleteBookRequest request) {
-        return given()
-                .spec(RequestSpec.baseRequest())
-                .header("Authorization", "Bearer " + TokenManager.getToken())
-                .body(request)
-                .delete(Endpoints.BOOK);
+    @Step("Получение книг пользователя {userId}")
+    public Response getUserBooks(String userId) {
+        return getWithAuth(Endpoints.BOOKS + "?userId=" + userId);
     }
 
-    @Step("Получение токена")
-    private String getToken() {
-        if (token == null) {
-            GenerateTokenRequest authRequest = GenerateTokenRequest.builder()
-                    .userName(ConfigManager.getConfig().username())
-                    .password(ConfigManager.getConfig().password())
-                    .build();
-            Response response = given()
-                    .spec(RequestSpec.baseRequest())
-                    .body(authRequest)
-                    .post(Endpoints.GENERATE_TOKEN);
-            token = response.jsonPath().getString("token");
-        }
-        return token;
+    @Step("Удаление книги с ISBN {isbn} из коллекции пользователя {userId}")
+    public Response deleteBook(String userId, String isbn) {
+        Map<String, String> requestBody = Map.of("isbn", isbn, "userId", userId);
+        return deleteWithAuth(Endpoints.BOOK, requestBody);
     }
 
-    @Step("Добавление книг в коллекцию пользователя")
-    public Response addBook(AddBookRequest request) {
-        return given()
-                .spec(RequestSpec.baseRequest())
-                .header("Authorization", "Bearer " + TokenManager.getToken())
-                .body(request)
-                .when()
-                .post(Endpoints.BOOKS);
+    @Step("Удаление всех книг пользователя {userId}")
+    public Response deleteAllBooks(String userId) {
+        String endpoint = Endpoints.BOOKS + "?UserId=" + userId;
+        return deleteWithAuth(endpoint);
+    }
+
+    @Step("Добавление книг в коллекцию пользователя {userId}")
+    public Response addBook(String userId, List<String> isbns) {
+        Assert.assertNotNull(userId, "userId не должен быть null");
+        Assert.assertNotNull(isbns, "список ISBN не должен быть null");
+        Map<String, Object> body = Map.of("userId", userId, "collectionOfIsbns", isbns.stream()
+                        .map(isbn -> Map.of("isbn", isbn))
+                        .toList()
+        );
+        return postWithAuth(Endpoints.BOOKS, body);
     }
 }
