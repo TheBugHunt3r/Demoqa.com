@@ -16,6 +16,10 @@ pipeline {
         stage('Build & Compile') {
             steps {
                 echo '🛠 Компиляция проекта...'
+                sh "mkdir -p .mvn/wrapper"
+                sh "echo 'distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.11/apache-maven-3.9.11-bin.zip' > .mvn/wrapper/maven-wrapper.properties"
+                sh "echo 'wrapperVersion=3.3.4' >> .mvn/wrapper/maven-wrapper.properties"
+
                 sh 'chmod +x mvnw'
                 sh './mvnw clean compile'
             }
