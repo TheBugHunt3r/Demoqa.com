@@ -31,14 +31,14 @@ pipeline {
                     steps {
                         echo '🚀 Запуск API тестов...'
                         sh 'chmod +x mvnw'
-                        sh './mvnw test -DsuiteXmlFile=api-suite.xml'
+                        sh './mvnw test -DsuiteXmlFile=src/test/resources/api-suite.xml'
                     }
                 }
                 stage('Job 2: UI Tests') {
                     steps {
                         echo "🖥 Запуск UI тестов в браузере: ${params.BROWSER}"
                         sh 'chmod +x mvnw'
-                        sh './mvnw test -DsuiteXmlFile=ui-suite.xml -Dheadless=true'
+                        sh "./mvnw test -DsuiteXmlFile=src/test/resources/ui-suite.xml -Dbrowser=${params.BROWSER} -Dheadless=true"
                     }
                 }
             }
