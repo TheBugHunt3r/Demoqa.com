@@ -16,7 +16,8 @@ pipeline {
         stage('Build & Compile') {
             steps {
                 echo '🛠 Компиляция проекта...'
-                sh 'mvn clean compile'
+                sh 'chmod +x mvnw'
+                sh './mvnw clean compile'
             }
         }
 
@@ -25,13 +26,15 @@ pipeline {
                 stage('Job 1: API Tests') {
                     steps {
                         echo '🚀 Запуск API тестов...'
-                        sh 'mvn test -DsuiteXmlFile=api-suite.xml'
+                        sh 'chmod +x mvnw'
+                        sh './mvnw test -DsuiteXmlFile=api-suite.xml'
                     }
                 }
                 stage('Job 2: UI Tests') {
                     steps {
                         echo "🖥 Запуск UI тестов в браузере: ${params.BROWSER}"
-                        sh "mvn test -DsuiteXmlFile=ui-suite.xml -Dbrowser=${params.BROWSER}"
+                        sh 'chmod +x mvnw'
+                        sh './mvnw test -DsuiteXmlFile=ui-suite.xml -Dheadless=true'
                     }
                 }
             }
