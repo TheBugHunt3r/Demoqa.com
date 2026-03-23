@@ -1,5 +1,6 @@
 package pages;
 
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
+@Slf4j
 public abstract class BasePage {
     protected WebDriver driver;
     protected WebDriverWait wait;
@@ -23,6 +25,7 @@ public abstract class BasePage {
     }
 
     protected void click(WebElement element) {
+        log.debug("ожидание кликабельности и клик по элементу");
         wait.until(ExpectedConditions.elementToBeClickable(element));
         scrollToElement(element);
         element.click();
@@ -32,26 +35,32 @@ public abstract class BasePage {
         int attempts = 0;
         while (attempts < 3) {
             try {
+                log.debug("ввод текста '{}'. попытка {}", text, attempts + 1);
                 wait.until(ExpectedConditions.visibilityOf(element));
                 scrollToElement(element);
                 element.clear();
                 element.sendKeys(text);
                 break;
             } catch (org.openqa.selenium.StaleElementReferenceException e) {
-                System.out.println("элемент не актуален");
+                log.warn("элемент стал неактуальным");
             }
             attempts++;
         }
     }
 
     protected String getElementText(WebElement element) {
-        return wait.until(ExpectedConditions.visibilityOf(element)).getText();
+        String text = wait.until(ExpectedConditions.visibilityOf(element)).getText();
+        log.debug("получен текст из элемента: {}", text);
+        return text;
     }
 
     protected boolean isElementDisplayed(WebElement element) {
         try {
-            return wait.until(ExpectedConditions.visibilityOf(element)).isDisplayed();
+            boolean isDisplayed = wait.until(ExpectedConditions.visibilityOf(element)).isDisplayed();
+            log.debug("элемент отображается: {}", isDisplayed);
+            return isDisplayed;
         } catch (Exception e) {
+            log.error("элемент не найден или не отображается после ожидания");
             return false;
         }
     }

@@ -4,7 +4,7 @@ import core.utils.OwnerDecryptor;
 import org.aeonbits.owner.Config;
 
 @Config.Sources({
-        "file:src/test/resources/features/config.properties"
+        "file:src/test/resources/config.properties"
 })
 @Config.DecryptorClass(OwnerDecryptor.class)
 public interface TestConfig extends Config {
