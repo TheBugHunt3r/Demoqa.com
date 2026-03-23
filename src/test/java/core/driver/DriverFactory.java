@@ -1,19 +1,42 @@
 package core.driver;
 
-import core.config.ConfigManager;
-import org.openqa.selenium.Dimension;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 
 public class DriverFactory {
-
     private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
-
-    public static void initDriver() {
-        String browser = ConfigManager.getConfig().browser();
-        if (browser.equalsIgnoreCase("chrome")) {
-            WebDriver webDriver = new ChromeDriver();
-            webDriver.manage().window().setSize(new Dimension(1920, 1080));
+    public static void initDriver(String browser) {
+        if (getDriver() == null) {
+            WebDriver webDriver;
+            boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "false"));
+            switch (browser.toLowerCase()) {
+                case "chrome":
+                    WebDriverManager.chromedriver().setup();
+                    ChromeOptions chromeOptions = new ChromeOptions();
+                    if (isHeadless) {
+                        chromeOptions.addArguments("--headless=new"); // Новый стандарт headless
+                        chromeOptions.addArguments("--disable-gpu");
+                        chromeOptions.addArguments("--no-sandbox");
+                        chromeOptions.addArguments("--disable-dev-shm-usage");
+                    }
+                    chromeOptions.addArguments("--window-size=1920,1080");
+                    webDriver = new ChromeDriver(chromeOptions);
+                    break;
+                case "firefox":
+                    WebDriverManager.firefoxdriver().setup();
+                    FirefoxOptions firefoxOptions = new FirefoxOptions();
+                    if (isHeadless) {
+                        firefoxOptions.addArguments("-headless");
+                    }
+                    webDriver = new FirefoxDriver(firefoxOptions);
+                    break;
+                default:
+                    throw new RuntimeException("Браузер " + browser + " не поддерживается.");
+            }
             driver.set(webDriver);
         }
     }
